@@ -26,7 +26,8 @@
 	$requeteLongueur = null;
 
 
-	$longueur = 10;
+	$longueur = 11;
+
 	//si appuie sur NEXT
 	if ($type == 'next'){
 		if($minPage + $longueur < $lengthDB){
@@ -34,6 +35,7 @@
 		}else{
 			$min = 0;
 		}
+
 	//si appuie sur PREVIOUS
 	}elseif ($type == 'previous'){
 		if (($minPage) <= 0){
@@ -41,15 +43,13 @@
 		}else{
 			$min = $minPage - $longueur;
 		}
+
 	//chargement de la premiere page
 	}else{
 		$min = 0;
 		
 	}
-
-		$requete = $pdo->prepare('SELECT * FROM ' . DB_TABLE . ' LIMIT :min, :longueur');
-
-		// $requete = $pdo->prepare('SELECT * FROM json LIMIT :min, :longueur');
+		$requete = $pdo->prepare('SELECT * FROM ' . DB_TABLE . ' ORDER BY ID DESC LIMIT :min, :longueur ');
 
 		$requete->bindParam(':min', $min, PDO::PARAM_INT);
 	 	$requete->bindParam(':longueur', $longueur, PDO::PARAM_INT);
@@ -64,13 +64,17 @@
 		echo '<a href="index.php?page=' . ($dataID) . '&type=next' .'" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-chevron-right"></span> </a>';
 		echo '</div>';
 
-
 	 	//entete du tableau
-		echo '<table class="table"><thead><tr><th>id</th><th>first_name</th><th>last_name</th><th>email</th><th>gender</th><th>language_id</th></tr></thead><tboby>';
+		echo '<table class="table"><thead><tr><th>first_name</th><th>last_name</th><th>email</th><th>gender</th><th>language_id</th><th></th></tr></thead><tboby>';
 
 		while($data = $requete -> fetch()){
-			echo '<tr><td>' . $data['ID'] . '</td><td>' . $data['first_name'] . '</td><td>' . $data['last_name'] . '</td><td>' . $data['email'] . '</td><td>' . $data['gender'] . '</td><td>' . $data['language_id'] . '</td></tr>';
-			
+			echo '<tr>	<td>' . $data['first_name'] . '</td>
+						<td>' . $data['last_name'] . '</td>
+						<td>' . $data['email'] . '</td>
+						<td>' . $data['gender'] . '</td>
+						<td>' . $data['language_id'] . '</td>
+						<td><a href="eraseUser.php?erase=' . $data['ID'] .'"'. 'class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a></td>
+					</tr>';
 		}
 
 		echo '</tbody></table>';		
