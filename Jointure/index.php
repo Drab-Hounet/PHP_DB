@@ -77,11 +77,22 @@
 							</select>
 						</div>
 					</div>
-					<div class = "col-md-2"> 
-						<div class="col-md-10 col-md-offset-2">
-							<button name="save">SAVE</button>
-						</div>
-					</div>
+
+
+					<?php
+					echo '<div class = "col-md-2"><div class="col-md-10 col-md-offset-2">';
+					echo '<button name="save">AJOUT</button>';
+					if((isset($_GET['copySuccess']) && $_GET['copySuccess'] == 'true')){
+						echo '<span class="glyphicon glyphicon-ok"></span>';
+					}else if((isset($_GET['copySuccess']) && $_GET['copySuccess'] == 'false')){
+						echo '<span class="glyphicon glyphicon-remove"> </span>';
+					}
+
+					echo '</div></div>';
+					?>
+
+
+
 				</div>
 			</div>
 	</form>
