@@ -7,10 +7,6 @@
 <head>
 
 <?php
-header('Access-Control-Allow-Origin: *');					//pour autoriser le site client à utiliser le flux html
-
-$method = $_SERVER['REQUEST_METHOD'];						//request method -> envoie de la méthode de requete -> POST ou GET ou autres (head, put, delete, connect, ...)
-//$input = file_get_contents('php://input');					//file_get_contents -> lire un flux  - php://input lit les données lors d'un post
 
 define( 'DB_NAME', 'jointureSimple' );
 define( 'DB_USER', 'root' );
