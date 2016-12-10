@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+	<title>Manipulation</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="css/style.css" rel="stylesheet">
+<head>
+
 <?php
 header('Access-Control-Allow-Origin: *');					//pour autoriser le site client à utiliser le flux html
 
@@ -6,7 +14,7 @@ $method = $_SERVER['REQUEST_METHOD'];						//request method -> envoie de la mét
 
 define( 'DB_NAME', 'jointureSimple' );
 define( 'DB_USER', 'root' );
-define( 'DB_PASSWORD', 'root' );
+define( 'DB_PASSWORD', '' );
 define( 'DB_HOST', 'localhost' );
 define( 'DB_TABLE', 'user' );
 define( 'DB_TABLE2', 'language' );
@@ -15,22 +23,44 @@ define( 'DB_TABLE2', 'language' );
 
 if(isset($_POST['url']) && !empty($_POST['url']) ){
 	$users = json_decode(file_get_contents($_POST['url']));
+	
+	// CREATION DE LA DATABASE
+	try{
+		// connexion à Mysql sans base de données
+		$pdo = new PDO('mysql:host='.DB_HOST, DB_USER, DB_PASSWORD);
+	
+	} catch (PDOException $e) {
+		print "Erreur !: " . $e -> getMessage() . "<br/>";
+    	die();
+	}	
+		// création de la requête sql
+		// on teste avant si elle existe ou non (par sécurité)
+		$requete = "CREATE DATABASE IF NOT EXISTS ".DB_NAME." DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
+		
+		// on prépare et on exécute la requête
+		$pdo->prepare($requete)->execute();
+		$pdo = null;
+	
 
-	// connexion à Mysql sans base de données
-	$pdo = new PDO('mysql:host='.DB_HOST, DB_USER, DB_PASSWORD);
-	
-	// création de la requête sql
-	// on teste avant si elle existe ou non (par sécurité)
-	$requete = "CREATE DATABASE IF NOT EXISTS ".DB_NAME." DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci";
-	
-	// on prépare et on exécute la requête
-	$pdo->prepare($requete)->execute();
+
 
 	echo '<p>DATABASE ' . DB_NAME . ' CREEE !</p>'; 
 
-	// connexion à la bdd
-	$connexion1 = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASSWORD);
-	$connexion2 = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASSWORD);
+	// CREATION DE LA TABLE
+	try{
+		$connexion1 = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER, DB_PASSWORD);
+	} catch (PDOException $e) {
+		print "Erreur !: " . $e -> getMessage() . "<br/>";
+    	die();
+	}
+
+	// CREATION DE LA TABLE2
+	try{
+		$connexion2 = new PDO("mysql:host=".DB_HOST.";dbname=" . DB_NAME, DB_USER, DB_PASSWORD);
+	} catch (PDOException $e) {
+		print "Erreur !: " . $e -> getMessage() . "<br/>";
+    	die();
+	}	
  	
 	if($connexion2){
 		// on créer la requête
@@ -64,18 +94,24 @@ if(isset($_POST['url']) && !empty($_POST['url']) ){
 	//var_dump($users);
 	
 
-
+	//COPIE DU FICHIER JSON DANS LA DB - TABLE CREEE
 	foreach ($users as $key => $ligne) {
 		
 		$first_name =  ($users[$key] -> first_name);
 		$last_name =  ($users[$key] -> last_name);
 		$email =  ($users[$key] -> email);
 		$gender =  ($users[$key] -> gender);
-		$language_id =  1;
+		$language_id =  rand(1,4);
 
 			//echo  $first_name . $last_name . $email . $gender ;
 
-		$pdo1 = new PDO('mysql:host=localhost;dbname=' . DB_NAME .';charset=utf8', 'root', 'root');
+		try{
+			$pdo1 = new PDO('mysql:host=localhost;dbname=' . DB_NAME .';charset=utf8', DB_USER, DB_PASSWORD);
+		} catch (PDOException $e) {
+		print "Erreur !: " . $e -> getMessage() . "<br/>";
+    	die();
+		}	
+		
 		//ajout de la donnée
 		$req = $pdo1 -> prepare('INSERT INTO '.  DB_TABLE .'(first_name,last_name,email,gender, language_id) VALUES(:first_name, :last_name, :email, :gender, :language_id)');
 
@@ -87,6 +123,19 @@ if(isset($_POST['url']) && !empty($_POST['url']) ){
 
 	}
 }
-
-
 ?>
+<body>
+<div class="col-md-1 col-md-offset-4">
+	<a href="index.php" class="btn btn-default">BACK</a>
+</div>
+
+
+
+
+
+
+
+</body>
+</head>
+</html>
+
