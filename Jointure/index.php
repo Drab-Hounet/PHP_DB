@@ -1,5 +1,3 @@
-<!-- This code is highly perfectible -->
-<!-- If you want to change it : do it -->
 <!DOCTYPE html>
 <html>
 <meta charset="UTF-8">
@@ -19,7 +17,7 @@
 	</div>
 
 
-	<form class='form-horizontal' action="saveUser.php" method="post">
+	<form class='form-horizontal' action="saveUser.php?type=ajout" method="post">
 		<div class="col-md-offset-1">
 			<h3>Ajouter un user dans la table user DB My SQL </h3>
 		</div>
