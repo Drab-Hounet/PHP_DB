@@ -49,7 +49,19 @@
 		$min = 0;
 		
 	}
-		$requete = $pdo->prepare('SELECT * FROM ' . DB_TABLE . ' ORDER BY ID DESC LIMIT :min, :longueur ');
+		// $requete = $pdo->prepare('SELECT * FROM ' . DB_TABLE . ' ORDER BY ID DESC LIMIT :min, :longueur ');
+
+		$requete = $pdo->prepare(	'SELECT * 
+									FROM ' . DB_TABLE2 . '
+									INNER JOIN '. DB_TABLE . ' 
+									ON ' . DB_TABLE . '.language_id = ' . DB_TABLE2 . '.ID  
+									ORDER BY ' . DB_TABLE . '.first_name LIMIT :min, :longueur ');
+
+		// $requete = $pdo->prepare( 	'SELECT *
+		// 							FROM language
+		// 							INNER JOIN user 
+		// 							ON user.language_id  = language.ID 
+		// 							ORDER BY user.first_name DESC LIMIT :min, :longueur ');
 
 		$requete->bindParam(':min', $min, PDO::PARAM_INT);
 	 	$requete->bindParam(':longueur', $longueur, PDO::PARAM_INT);
@@ -65,18 +77,20 @@
 		echo '</div>';
 
 	 	//entete du tableau
-		echo '<table class="table"><thead><tr><th>first_name</th><th>last_name</th><th>email</th><th>gender</th><th>language_id</th><th></th></tr></thead><tboby>';
+		echo '<table class="table"><thead><tr><th>first_name</th><th>last_name</th><th>email</th><th>gender</th><th>language</th><th>Création language</th><th></th><th></th></tr></thead><tboby>';
 
 		while($data = $requete -> fetch()){
 			echo '<tr>	<td>' . $data['first_name'] . '</td>
 						<td>' . $data['last_name'] . '</td>
 						<td>' . $data['email'] . '</td>
 						<td>' . $data['gender'] . '</td>
-						<td>' . $data['language_id'] . '</td>
-						<td><a href="eraseUser.php?erase=' . $data['ID'] .'"'. 'class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a></td>
-					</tr>';
+						<td>' . $data['name'] . '</td>
+						<td>' . $data['creation_date'] . '</td>
+						<td><a href="eraseUser.php?erase=' . $data['ID'] .'"'. 'class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a></td>
+						<td><a href="updateUser.php?update=' . $data['ID'] .'"'. 'class="btn btn-success"><span class="glyphicon glyphicon-refresh"></span></a></td>
+						</tr>';
 		}
-
+				
 		echo '</tbody></table>';		
 		
 	
